@@ -1,5 +1,7 @@
 # Sudoku Game
 
+This repository is created by AI without any single line written by the author.
+
 This project is a Sudoku game implemented using React and TypeScript. The purpose of this project is to provide an interactive and fun way to play Sudoku in a web browser.
 
 ## Setting Up the Environment
