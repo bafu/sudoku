@@ -26,6 +26,45 @@ npm start
 
 This will start the development server and open the game in your default web browser. You can then play the Sudoku game by following the instructions provided in the game interface.
 
+## Building for Production
+
+To create a production build of the Sudoku game, run:
+
+```bash
+npm run build
+```
+
+This will generate optimized production files in the `dist` directory.
+
+## Hosting on GitHub Pages
+
+You can host this Sudoku game on GitHub Pages by following these steps:
+
+1. Add the `gh-pages` package to your project:
+   ```bash
+   npm install --save-dev gh-pages
+   ```
+
+2. Add the following scripts to your `package.json`:
+   ```json
+   "predeploy": "npm run build",
+   "deploy": "gh-pages -d dist"
+   ```
+
+3. Add the homepage field to your `package.json`:
+   ```json
+   "homepage": "https://[your-github-username].github.io/sudoku"
+   ```
+
+4. Deploy the application to GitHub Pages:
+   ```bash
+   npm run deploy
+   ```
+
+5. Configure your GitHub repository settings to use the `gh-pages` branch for GitHub Pages.
+
+After deployment, your Sudoku game will be available at `https://[your-github-username].github.io/sudoku`.
+
 ## How to Play the Sudoku Game
 
 1. Select a difficulty level from the dropdown menu and click "Start Game".
