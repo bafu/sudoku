@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 
-const SudokuGame = () => {
+// Add TypeScript types
+type Cell = [number, number];
+type Board = number[][];
+type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
+
+const SudokuGame: React.FC = () => {
   // Game states
-  const [selectedCell, setSelectedCell] = useState(null);
-  const [gameBoard, setGameBoard] = useState([]);
-  const [originalBoard, setOriginalBoard] = useState([]);
-  const [completed, setCompleted] = useState(false);
-  const [difficulty, setDifficulty] = useState('medium');
-  const [gameStarted, setGameStarted] = useState(false);
-  const [timer, setTimer] = useState(0);
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [invalidCells, setInvalidCells] = useState([]);
+  const [selectedCell, setSelectedCell] = useState<Cell | null>(null);
+  const [gameBoard, setGameBoard] = useState<Board>([]);
+  const [originalBoard, setOriginalBoard] = useState<Board>([]);
+  const [completed, setCompleted] = useState<boolean>(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(0);
+  const [timerRunning, setTimerRunning] = useState<boolean>(false);
+  const [invalidCells, setInvalidCells] = useState<Cell[]>([]);
 
   // Generate a completed Sudoku board
-  const generateSolvedBoard = () => {
+  const generateSolvedBoard = (): Board => {
     // Create empty 9x9 board
-    const board = Array(9).fill().map(() => Array(9).fill(0));
+    const board = Array(9).fill(null).map(() => Array(9).fill(0));
     
     // Fill diagonal 3x3 boxes first (these can be filled independently)
     fillDiagonalBoxes(board);
@@ -27,14 +32,14 @@ const SudokuGame = () => {
   };
 
   // Fill the three diagonal 3x3 boxes
-  const fillDiagonalBoxes = (board) => {
+  const fillDiagonalBoxes = (board: Board): void => {
     for (let box = 0; box < 9; box += 3) {
       fillBox(board, box, box);
     }
   };
 
   // Fill a 3x3 box with valid numbers
-  const fillBox = (board, rowStart, colStart) => {
+  const fillBox = (board: Board, rowStart: number, colStart: number): void => {
     const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     
     // Shuffle the array
@@ -52,7 +57,7 @@ const SudokuGame = () => {
   };
 
   // Function to solve the Sudoku board using backtracking
-  const solveBoard = (board) => {
+  const solveBoard = (board: Board): boolean => {
     const emptyCell = findEmptyCell(board);
     if (!emptyCell) return true; // Board is solved
     
@@ -75,7 +80,7 @@ const SudokuGame = () => {
   };
 
   // Find an empty cell in the board
-  const findEmptyCell = (board) => {
+  const findEmptyCell = (board: Board): Cell | null => {
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (board[row][col] === 0) {
@@ -87,7 +92,7 @@ const SudokuGame = () => {
   };
 
   // Check if placing a number is valid
-  const isValidPlacement = (board, row, col, num) => {
+  const isValidPlacement = (board: Board, row: number, col: number, num: number): boolean => {
     // Check row
     for (let i = 0; i < 9; i++) {
       if (board[row][i] === num) return false;
@@ -112,7 +117,7 @@ const SudokuGame = () => {
   };
 
   // Create a playable board by removing some numbers
-  const createPlayableBoard = (solvedBoard, difficulty) => {
+  const createPlayableBoard = (solvedBoard: Board, difficulty: Difficulty): Board => {
     const board = JSON.parse(JSON.stringify(solvedBoard));
     const cellsToRemove = {
       'easy': 30,
@@ -136,7 +141,7 @@ const SudokuGame = () => {
   };
 
   // Start a new game
-  const startNewGame = () => {
+  const startNewGame = (): void => {
     const solvedBoard = generateSolvedBoard();
     const playableBoard = createPlayableBoard(solvedBoard, difficulty);
     
@@ -151,7 +156,7 @@ const SudokuGame = () => {
   };
 
   // Handle cell selection
-  const handleCellSelect = (row, col) => {
+  const handleCellSelect = (row: number, col: number): void => {
     // Can't select cells that were filled in originally
     if (originalBoard[row][col] !== 0) return;
     
@@ -159,7 +164,7 @@ const SudokuGame = () => {
   };
 
   // Handle number input
-  const handleNumberInput = (num) => {
+  const handleNumberInput = (num: number): void => {
     if (!selectedCell) return;
     
     const [row, col] = selectedCell;
@@ -180,7 +185,7 @@ const SudokuGame = () => {
   };
 
   // Check if the board is completely filled
-  const isBoardFilled = (board) => {
+  const isBoardFilled = (board: Board): boolean => {
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
         if (board[row][col] === 0) return false;
@@ -190,10 +195,10 @@ const SudokuGame = () => {
   };
 
   // Check if the current board state is valid
-  const isBoardValid = (board) => {
+  const isBoardValid = (board: Board): boolean => {
     // Check rows
     for (let row = 0; row < 9; row++) {
-      const seen = new Set();
+      const seen = new Set<number>();
       for (let col = 0; col < 9; col++) {
         const num = board[row][col];
         if (num === 0) continue;
@@ -204,7 +209,7 @@ const SudokuGame = () => {
     
     // Check columns
     for (let col = 0; col < 9; col++) {
-      const seen = new Set();
+      const seen = new Set<number>();
       for (let row = 0; row < 9; row++) {
         const num = board[row][col];
         if (num === 0) continue;
@@ -216,7 +221,7 @@ const SudokuGame = () => {
     // Check 3x3 boxes
     for (let boxRow = 0; boxRow < 9; boxRow += 3) {
       for (let boxCol = 0; boxCol < 9; boxCol += 3) {
-        const seen = new Set();
+        const seen = new Set<number>();
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             const num = board[boxRow + i][boxCol + j];
@@ -232,18 +237,18 @@ const SudokuGame = () => {
   };
 
   // Highlight invalid cells
-  const highlightInvalidCells = (board) => {
-    const invalid = [];
+  const highlightInvalidCells = (board: Board): void => {
+    const invalid: Cell[] = [];
     
     // Check rows
     for (let row = 0; row < 9; row++) {
-      const seen = new Map();
+      const seen = new Map<number, number>();
       for (let col = 0; col < 9; col++) {
         const num = board[row][col];
         if (num === 0) continue;
         if (seen.has(num)) {
           invalid.push([row, col]);
-          invalid.push([row, seen.get(num)]);
+          invalid.push([row, seen.get(num)!]);
         }
         seen.set(num, col);
       }
@@ -251,13 +256,13 @@ const SudokuGame = () => {
     
     // Check columns
     for (let col = 0; col < 9; col++) {
-      const seen = new Map();
+      const seen = new Map<number, number>();
       for (let row = 0; row < 9; row++) {
         const num = board[row][col];
         if (num === 0) continue;
         if (seen.has(num)) {
           invalid.push([row, col]);
-          invalid.push([seen.get(num), col]);
+          invalid.push([seen.get(num)!, col]);
         }
         seen.set(num, row);
       }
@@ -266,7 +271,7 @@ const SudokuGame = () => {
     // Check 3x3 boxes
     for (let boxRow = 0; boxRow < 9; boxRow += 3) {
       for (let boxCol = 0; boxCol < 9; boxCol += 3) {
-        const seen = new Map();
+        const seen = new Map<number, [number, number]>();
         for (let i = 0; i < 3; i++) {
           for (let j = 0; j < 3; j++) {
             const row = boxRow + i;
@@ -275,7 +280,7 @@ const SudokuGame = () => {
             if (num === 0) continue;
             if (seen.has(num)) {
               invalid.push([row, col]);
-              const [prevI, prevJ] = seen.get(num);
+              const [prevI, prevJ] = seen.get(num)!;
               invalid.push([boxRow + prevI, boxCol + prevJ]);
             }
             seen.set(num, [i, j]);
@@ -288,12 +293,12 @@ const SudokuGame = () => {
   };
 
   // Show hints (one cell)
-  const showHint = () => {
+  const showHint = (): void => {
     if (!gameStarted) return;
     
     // Find a random empty or incorrect cell and fill it with the correct value
     const solvedBoard = generateSolvedBoard(); // Get a solution
-    const emptyOrIncorrectCells = [];
+    const emptyOrIncorrectCells: Cell[] = [];
     
     for (let row = 0; row < 9; row++) {
       for (let col = 0; col < 9; col++) {
@@ -323,7 +328,7 @@ const SudokuGame = () => {
 
   // Timer effect
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
     if (timerRunning) {
       interval = setInterval(() => {
         setTimer(prevTimer => prevTimer + 1);
@@ -333,24 +338,24 @@ const SudokuGame = () => {
   }, [timerRunning]);
 
   // Format time for display
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   // Check if a cell is in the invalidCells list
-  const isInvalidCell = (row, col) => {
+  const isInvalidCell = (row: number, col: number): boolean => {
     return invalidCells.some(cell => cell[0] === row && cell[1] === col);
   };
 
   // Check if a cell is the selected cell
-  const isSelectedCell = (row, col) => {
-    return selectedCell && selectedCell[0] === row && selectedCell[1] === col;
+  const isSelectedCell = (row: number, col: number): boolean => {
+    return selectedCell !== null && selectedCell[0] === row && selectedCell[1] === col;
   };
 
   // Check if a cell is in the same row, column, or 3x3 box as the selected cell
-  const isRelatedToSelected = (row, col) => {
+  const isRelatedToSelected = (row: number, col: number): boolean => {
     if (!selectedCell) return false;
     
     const [selectedRow, selectedCol] = selectedCell;
@@ -379,7 +384,7 @@ const SudokuGame = () => {
       <div className="mb-4 flex items-center space-x-4">
         <select
           value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
+          onChange={(e) => setDifficulty(e.target.value as Difficulty)}
           className="p-2 border rounded"
           disabled={gameStarted && !completed}
         >
@@ -416,8 +421,8 @@ const SudokuGame = () => {
       {gameStarted && (
         <div className="bg-white p-1 rounded-lg shadow-lg">
           <div className="grid grid-cols-9 gap-0 border-2 border-black">
-            {Array(9).fill().map((_, rowIndex) => (
-              Array(9).fill().map((_, colIndex) => {
+            {Array(9).fill(null).map((_, rowIndex) => (
+              Array(9).fill(null).map((_, colIndex) => {
                 const value = gameBoard[rowIndex][colIndex];
                 const isOriginal = originalBoard[rowIndex][colIndex] !== 0;
                 const isInvalid = isInvalidCell(rowIndex, colIndex);
